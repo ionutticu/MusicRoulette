@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+	    <%= javascript_include_tag 'application' %>
+    </head>
+
+    <body>
+
+        <%= render 'layouts/center' %>
+
+        <div id ="button_div">
+            <%= link_to "Random Music Video", "javascript:void(0)", id: "randommusic", class: "btn waves-effect waves-light tooltipped pulse hoverable",  "data-position" => "bottom", "data-tooltip" => "Enjoy your music" %>
+
+        <div>
+
+        <div style="clear:both;"></div>
+        <br/>
+
+    </body>
+
+</html>

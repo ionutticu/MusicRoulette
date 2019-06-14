@@ -1,0 +1,66 @@
+    <div class="padding-div">
+
+        <div style="float: left; width: 30%; padding-right: 20px;">
+            <label>Città ritiro:</label>
+            <select id="cittaRitiro">
+                <option value="none" disabled selected>Seleziona la città di ritiro</option>
+                <%= render 'layouts/cities' %>
+            </select>
+        </div>
+
+        <div style="float: left; width: 30%; padding-right: 20px;">
+            <label>Città consegna:</label>
+            <select id="cittaConsegna">
+                <option value="none" disabled selected>Seleziona la città di consegna (default: città ritiro)</option>
+                <%= render 'layouts/cities' %>
+            </select>
+        </div>
+
+        <div style="clear:both; height: 70px;"></div>
+
+        <div style="float: left; width: 15%; padding-right: 20px;">
+            <label>Ritiro:</label>
+            <input type="text" id="dataRitiro" class="datepicker"><br/><br/>
+        </div>
+
+        <div style="float: left; width: 10%; padding-right: 50px;">
+            <label>Orario: </label>
+            <input type="time" id="oraRitiro" value="10:00" step="1800"><br/><br/>
+        </div>
+
+        <div style="float: left; width: 15%; padding-right: 20px;">
+            <label>Consegna: </label>
+            <input type="text" id="dataConsegna" class="datepicker"><br/><br/>
+        </div>
+
+        <div style="float: left; width: 10%; padding-right: 20px;">
+            <label>Orario: </label>
+            <input type="time" id="oraConsegna" value="10:00" step="1800"><br/><br/>
+        </div>
+
+        <div style="clear:both; height: 70px;"></div>
+
+        <div style="float: left; width: 15%; padding-right: 50px;">
+            <label>Passeggeri:</label>
+            <select id="numeroPasseggeri">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7+">7+</option>
+            </select>
+        </div>
+
+        <div style="float: left; width: 15%; padding-right: 50px;">
+            <label>Età conducente: <h6>(deve essere compresa tra 21 e 99)</h6></label>
+            <input value="30" id="etaConducente" type="text">
+        </div>
+
+        <div style="clear:both;"></div>
+        
+    </div>
+
+    <div style="clear:both;"></div>
+    <br/>

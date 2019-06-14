@@ -1,0 +1,273 @@
+$(document).ready(function() {
+    // Variabili
+    var openweatherkey = "<%= Rails.application.credentials.dig(:OPEN_WEATHER_KEY) %>";
+    var aviationedgekey = "<%= Rails.application.credentials.dig(:AVIATION_EDGE_KEY) %>";
+
+    // Gestione passeggeri
+    $("#a-").on("click", function() {
+        var n = document.getElementById("passeggeri");
+        var num_passeggeri = parseInt(n.textContent);
+        if(num_passeggeri != 1) {
+            num_passeggeri--;
+            n.innerText = num_passeggeri;
+        }
+    });
+
+    $("#aadd").on("click", function() {
+        var n = document.getElementById("passeggeri");
+        var num_passeggeri = parseInt(n.textContent);
+        num_passeggeri++;
+        n.innerText = num_passeggeri;
+    });
+
+    // Date consistenti
+    $("#dataCheckin").on("change", function() {
+        var checkin = document.getElementById("dataCheckin");
+        var checkout = document.getElementById("dataCheckout");
+        checkout.value = checkin.value;
+    });
+
+    $("#dataAndata").on("change", function() {
+        var andata = document.getElementById("dataAndata");
+        var ritorno = document.getElementById("dataRitorno");
+        ritorno.value = andata.value;
+    });
+
+    $("#dataRitiro").on("change", function() {
+        var ritiro = document.getElementById("dataRitiro");
+        var consegna = document.getElementById("dataConsegna");
+        consegna.value = ritiro.value;
+    });
+
+
+
+
+
+            $("#randommusic").on("click", function() {
+                console.log("ciao sono la funzione randommusic")
+                req={}
+                req["Access-Control-Allow-Origin"]='https://www.youtube.com'
+                req["Access-Control-Allow-Methods"]='POST, PUT, DELETE, GET, OPTIONS'
+                req["Access-Control-Allow-Headers"]='Origin, X-Requested-With, Content-Type, Accept, Authorization'
+                req["success"]= function (data) {set_video_link(JSON.parse(data).idVideo)};
+                req["url"]="https://ytroulette.com/roulette.php"
+                req["type"]="POST"
+                req["contentType"]="application/x-www-form-urlencoded"
+                req["data"]={
+                    cat: 1,
+                    pos: Math.floor(Math.random()*2000)
+                }
+                console.log(req)
+                $.ajax (req
+                );
+
+
+    });
+
+    //Ricerca hotel
+    $("#ricercahotel").on("click", function() {
+        var citta = document.getElementById("cittaHotel").value;
+        if(citta == "none") {
+            M.toast({html: "Devi selezionare una città!"});
+            return false;
+        }
+        var datacheckin = document.getElementById("dataCheckin").value;
+        var anno = datacheckin.substr(6, 4);
+        var mese = datacheckin.substr(3, 2);
+        var giorno = datacheckin.substr(0 ,2);
+        datacheckin = anno+"-"+mese+"-"+giorno;
+        var datacheckout = document.getElementById("dataCheckout").value;
+        anno = datacheckout.substr(6, 4);
+        mese = datacheckout.substr(3, 2);
+        giorno = datacheckout.substr(0 ,2);
+        datacheckout = anno+"-"+mese+"-"+giorno;
+        var persone = document.getElementById("numeroPersoneHotel").value;
+        var stanze = document.getElementById("numeroStanze").value;
+		var link = "https://www.skyscanner.it/hotels/search?entity_id="+citta+"&checkin="+datacheckin+"&checkout="+datacheckout+"&adults="+persone+"&rooms="+stanze;        window.open(link, "_blank");
+        window.focus();
+    });
+
+    //Ricerca auto
+    $("#ricercaauto").on("click", function() {
+        var cittaritiro = document.getElementById("cittaRitiro").value;
+        if(cittaritiro == "none") {
+            M.toast({html: "Devi selezionare una città!"});
+            return false;
+        }
+        var cittaconsegna = document.getElementById("cittaConsegna").value;
+        var dataritiro = document.getElementById("dataRitiro").value;
+        var anno = dataritiro.substr(6, 4);
+        var mese = dataritiro.substr(3, 2);
+        var giorno = dataritiro.substr(0 ,2);
+        dataritiro = anno+"-"+mese+"-"+giorno;
+        var dataconsegna = document.getElementById("dataConsegna").value;
+        anno = dataconsegna.substr(6, 4);
+        mese = dataconsegna.substr(3, 2);
+        giorno = dataconsegna.substr(0 ,2);
+        dataconsegna = anno+"-"+mese+"-"+giorno;
+        var oraritiro = document.getElementById("oraRitiro").value;
+        var oraconsegna = document.getElementById("oraConsegna").value;
+        var etaconducente = document.getElementById("etaConducente").value;
+        if(isNaN(etaconducente) || Number(etaconducente) < 21 || Number(etaconducente) > 99) {
+            M.toast({html: "Devi inserire un'età compresa tra 21 e 99!"});
+            return false;
+        }
+        var link = "https://www.skyscanner.it/autonoleggio/risultati/"+cittaritiro+"/"+cittaconsegna+"/"+dataritiro+"T"+oraritiro+"/"+dataconsegna+"T"+oraconsegna+"/"+etaconducente;
+        window.open(link, "_blank");
+        window.focus();
+    });
+
+    //Città consegna = città ritiro
+    $("#cittaRitiro").on("change", function() {
+        var cittaritiro = document.getElementById("cittaRitiro");
+        var cittaconsegna = document.getElementById("cittaConsegna");
+        cittaconsegna.value = cittaconsegna[cittaritiro.selectedIndex].value;
+    });
+
+    //Meteo e informazioni aeroporto città arrivo
+    if(user_email != "guest") {
+        $("#cittaArrivo").on("change", function() {
+            var cittaarrivo = document.getElementById("cittaArrivo");
+            var idmeteo = cittaarrivo[cittaarrivo.selectedIndex].id;
+            $.ajax ({
+                url: "http://api.openweathermap.org/data/2.5/weather?id="+idmeteo+"&APPID="+openweatherkey+"&units=metric&lang=IT",
+                dataType: "json",
+
+                success: function (data) {
+                    var citta = data["name"];
+                    var nazione = data["sys"]["country"];
+                    var main = data["main"];
+                    var temperatura = JSON.stringify(main["temp"])+"°";
+                    var min = JSON.stringify(main["temp_min"])+"°";
+                    var max = JSON.stringify(main["temp_max"])+"°";
+                    var pressione = JSON.stringify(main["pressure"]);
+                    var umidita = JSON.stringify(main["humidity"]);
+                    var weather = JSON.stringify(data["weather"]).split(",");
+                    var descrizioni = weather[2].split(":");
+                    var descrizione = descrizioni[1];
+                    descrizione = descrizione.substr(1, descrizione.length - 2);
+                    $("#nomeCittaArrivo").html(citta+", "+nazione);
+                    $("#meteoCittaArrivo").html(temperatura);
+                    $("#descrizioneCittaArrivo").text(descrizione);
+                }
+            });
+
+            var infoarrivo = document.getElementById("infoArrivo");
+            var iataairport = cittaarrivo[cittaarrivo.selectedIndex].value;
+            $.ajax ({
+                url: "https://aviation-edge.com/v2/public/airportDatabase?key="+aviationedgekey+"&codeIataAirport="+iataairport,
+
+                success: function (data) {
+                    if(data == '{"error": {"text": "No Record Found" }}') infoarrivo.innerHTML = "Informazioni non disponibili!";
+                    else {
+                        text = data.substr(2, data.length - 4); //Rendo la stringa compatobole con JSON
+                        var jtext = JSON.parse(text); //Converto la stringa in JSON
+                        infoarrivo.innerHTML = "ID aeroporto: "+jtext.airportId+"<br/>Nome aeroporto: "+jtext.nameAirport+"<br/>Timezone: "
+                            +jtext.timezone+"<br/>GMT: "+jtext.GMT+"<br/>Nazione: "+jtext.nameCountry+" ("+jtext.codeIso2Country+")";
+                    }
+                }
+            });
+        });
+    }
+
+    // Informazioni aeroporto città partenza
+    if(user_email != "guest") {
+        $("#cittaPartenza").on("change", function() {
+            var infopartenza = document.getElementById("infoPartenza");
+            var cittapartenza = document.getElementById("cittaPartenza");
+            var iataairport = cittapartenza[cittapartenza.selectedIndex].value;
+            var text, jtext, id, nome, time, gtm, nazione, na;
+            $.ajax ({
+                url: "https://aviation-edge.com/v2/public/airportDatabase?key="+aviationedgekey+"&codeIataAirport="+iataairport,
+
+                success: function (data) {
+                    if(data == '{"error": {"text": "No Record Found" }}') infoarrivo.innerHTML = "Informazioni non disponibili!";
+                    else {
+                        text = data.substr(2, data.length - 4); //Rendo la stringa compatobole con JSON
+                        jtext = JSON.parse(text); //Converto la stringa in JSON
+                        id = jtext.airportId;
+                        nome = jtext.nameAirport;
+                        time = jtext.timezone;
+                        gtm = jtext.GMT;
+                        nazione = jtext.nameCountry;
+                        na = jtext.codeIso2Country;
+                        infopartenza.innerHTML = "ID aeroporto: "+id+"<br/>Nome aeroporto: "+nome+"<br/>Timezone: "
+                            +time+"<br/>GMT: "+gtm+"<br/>Nazione: "+nazione+" ("+na+")";
+                    }
+                }
+            });
+        });
+    }
+
+    // Tracker voli
+    $("#infovoli").on("click", function() {
+        var cittapartenza = document.getElementById("cittaPartenza");
+        var cittaarrivo = document.getElementById("cittaArrivo");
+        var iatapartenza = cittapartenza[cittapartenza.selectedIndex].value;
+        var iataarrivo = cittaarrivo[cittaarrivo.selectedIndex].value;
+        var tratta = document.getElementById("tratta");
+        var volidisponibili = document.getElementById("voliDisponibili");
+        var text, jtext;
+        if(cittapartenza.value == "none") {
+            M.toast({html: "Devi selezionare la città di partenza!"});
+            return false;
+        }
+        if(cittaarrivo.value == "none") {
+            M.toast({html: "Devi selezionare la città di arrivo!"});
+            return false;
+        }
+        $.ajax ({
+            url: "http://aviation-edge.com/v2/public/flights?key="+aviationedgekey+"&depIata="+iatapartenza+"&arrIata="+iataarrivo,
+
+            success: function (data) {
+                text = data.substr(1, data.length - 2); //Rendo la stringa compatobole con JSON
+                var errmsg = '"error": "No Record Found or Flight not currently detected by receivers. " ';
+                if(text == errmsg) volidisponibili.innerHTML = "Nessuna informazione disponibile per la tratta selezionata!";
+                else {
+                    jtext = JSON.parse(text);
+                    tratta.innerHTML = "Tratta "+cittapartenza[cittapartenza.selectedIndex].text+"-"+cittaarrivo[cittaarrivo.selectedIndex].text;
+                    var latitudine = JSON.stringify(jtext.geography.latitude);
+                    var longitudine = JSON.stringify(jtext.geography.altitude);
+                    var altitudine = JSON.stringify(jtext.geography.altitude);
+                    var velocita = JSON.stringify(jtext.speed.horizontal);
+                    var stato = JSON.stringify(jtext.status);
+                    stato = stato.substr(1, stato.length - 2);
+                    var compagnia = JSON.stringify(jtext.airline.icaoCode);
+                    compagnia = compagnia.substr(1, compagnia.length - 2);
+                    var codicevolo = JSON.stringify(jtext.flight.number);
+                    codicevolo = codicevolo.substr(1, codicevolo.length - 2);
+                    var infovolo = "<label style='font-size: 14pt; padding-bottom: 0;'>Volo:</label> Compagnia: "+compagnia+";<br/>Numero: "+codicevolo+";";
+                    var posizione = "<label style='font-size: 14pt; padding-bottom: 0;'>Posizione:</label> Latitudine: "+latitudine+";<br/> Longitudine: "+longitudine+";<br/> Altezza: "+altitudine+";<br/> Velocità: "+velocita+";";
+                    var statohtml = "<label style='font-size: 14pt; padding-bottom: 0;'>Stato:</label>"+stato;
+                    volidisponibili.innerHTML = infovolo+"<br/>"+posizione+"<br/>"+statohtml;
+                }
+            }
+        });
+    });
+
+});
+
+function set_video_link(id){
+    document.getElementById("videos").innerHTML ='<div  class="center" style="width: 100%;"><iframe width="700" height="500" src="https://www.youtube.com/embed/' + id +'"&origin=http:localhost:3000 frameborder="10" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>'
+}
+// Cambio id ricerca
+function set_voli_id() {
+    document.getElementById("ricercavoli").removeAttribute("style");
+    document.getElementById("ricercahotel").style.display="none";
+    document.getElementById("ricercaauto").style.display="none";
+    return false;
+}
+
+function set_hotel_id() {
+    document.getElementById("ricercavoli").style.display="none";
+    document.getElementById("ricercahotel").removeAttribute("style");
+    document.getElementById("ricercaauto").style.display="none";
+    return false;
+}
+
+function set_auto_id() {
+    document.getElementById("ricercavoli").style.display="none";
+    document.getElementById("ricercahotel").style.display="none";
+    document.getElementById("ricercaauto").removeAttribute("style");
+    return false;
+}

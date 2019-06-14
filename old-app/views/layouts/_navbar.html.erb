@@ -1,0 +1,34 @@
+
+<!-- Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+  <li><%= link_to 'Profilo', edit_user_registration_path %></li>
+  <li><%= link_to 'Statistiche', statistics_path %></li>
+  <li class="divider"></li>
+  <li><%= link_to 'Esci', destroy_user_session_path, method: :delete %></li>
+</ul>
+
+
+<div class="navbar-fixed">
+    <nav>
+        <div class="nav-wrapper">
+            <%= link_to image_tag("logo.jpg", class:"logo", :alt => "LOGO"), root_path %>
+
+            <% if current_user %>
+            <ul id="nav-mobile" class="right hide-on-med-and-down navbar-buttons">
+                <li class="valign-wrapper" id="vb">                        
+                    <a class="btn dropdown-trigger hoverable chip" data-target="dropdown1">
+                        <%= image_tag(current_user.avatar.url(:thumb), class:"user_avatar left") %>
+                        <%= current_user.first_name %>
+                    </a>
+                </li>
+            </ul>
+
+            <% else %>
+            <ul id="nav-mobile" class="right hide-on-med-and-down navbar-buttons">
+                <li id="vb"><%= link_to 'Accedi', new_user_session_path, class: 'waves-effect waves-light btn hoverable' %></li>
+                <li id="vb"><%= link_to 'Registrati', new_user_registration_path, class: 'waves-effect waves-light btn hoverable' %></li>
+            </ul>
+            <% end %>
+        </div>
+    </nav>
+</div>

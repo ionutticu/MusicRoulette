@@ -1,0 +1,36 @@
+<head>
+  <%= javascript_include_tag 'application' %>
+</head>
+
+<div class="devise_format" style="padding-bottom: 70px;">
+  
+  <h2>Accedi</h2><br/>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <div class="input-field col s6">
+      <i class="material-icons prefix">mail</i>
+      <%= f.email_field :email, class: "validate", id: "email_field", autofocus: true, autocomplete: "email" %>
+      <%= f.label :email, for: "email_field" %><br />
+    </div>
+
+    <div class="input-field col s6">
+      <i class="material-icons prefix">security</i>
+      <%= f.password_field :password, class: "validate", id: "password_field", autocomplete: "new-password" %>
+      <%= f.label :password, for: "password_field" %><br />
+    </div>
+
+    <% if devise_mapping.rememberable? -%>
+      <div class="field">
+        <label><%= f.check_box :remember_me, class: "filled-in" %><span id="a">Ricordami</span></label>
+      </div>
+    <% end -%>
+
+    <div class="actions">
+      <%= link_to 'Indietro', root_path, class: 'waves-effect waves-light btn' %>
+      <%= f.submit "Login", class: 'waves-effect waves-light btn' %>
+    </div>
+  <% end %>
+
+  <%= render "devise/shared/links" %>
+
+</div>

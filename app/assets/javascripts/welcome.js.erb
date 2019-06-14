@@ -1,0 +1,24 @@
+$(document).ready(function() {
+    $("#randommusic").on("click", function() {
+        req={}
+        req["Access-Control-Allow-Origin"]='https://www.youtube.com'
+        req["Access-Control-Allow-Methods"]='POST, PUT, DELETE, GET, OPTIONS'
+        req["Access-Control-Allow-Headers"]='Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        req["success"]= function (data) {set_video_link(JSON.parse(data).idVideo)};
+        req["url"]="https://ytroulette.com/roulette.php"
+        req["type"]="POST"
+        req["contentType"]="application/x-www-form-urlencoded"
+        req["data"]={
+            cat: 1,
+            pos: Math.floor(Math.random()*2000)
+        }
+        $.ajax (req);
+    });
+
+    function set_video_link(id){
+        document.getElementById("videos").innerHTML ='<div  class="center" style="width: 100%;"><iframe width="700" height="500" src="https://www.youtube.com/embed/' + id +'"&origin=http:localhost:3000 frameborder="10" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>'
+    }
+});
+
+
+
